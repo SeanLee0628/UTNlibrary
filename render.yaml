@@ -2,7 +2,7 @@ services:
   - type: web
     name: utnlibrary-backend
     env: python
-    buildCommand: "pip install -r backend/requirements.txt && cd backend && prisma py fetch --schema=schema.prisma && python -m prisma generate --schema=schema.prisma"
+    buildCommand: "pip install -r backend/requirements.txt && cd backend && python -m prisma generate --schema=schema.prisma"
     startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: DATABASE_URL
