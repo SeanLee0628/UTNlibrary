@@ -15,12 +15,17 @@ db = Prisma()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await db.connect()
+    # Ensure Prisma connects correctly in production
     try:
-        # Create standard tables if not exist (Prisma push usually handles this, but we'll assume migration runs)
+        await db.connect()
         yield
+    except Exception as e:
+        print(f"Failed to connect to DB: {e}")
+        # In case of binary path issues, we might try re-connecting or logging
+        raise e
     finally:
-        await db.disconnect()
+        if db.is_connected():
+            await db.disconnect()
 
 app = FastAPI(lifespan=lifespan)
 
