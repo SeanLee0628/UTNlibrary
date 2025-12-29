@@ -1,0 +1,36 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+model Book {
+  id        Int      @id @default(autoincrement())
+  title     String
+  author    String
+  qrData    String   @unique
+  status    String   @default("AVAILABLE") // "AVAILABLE", "LOANED"
+  loans     Loan[]
+}
+
+model Member {
+  id        Int      @id @default(autoincrement())
+  name      String
+  loans     Loan[]
+}
+
+model Loan {
+  id        Int      @id @default(autoincrement())
+  loanDate  DateTime @default(now())
+  dueDate   DateTime
+  returnDate DateTime?
+  memberId  Int
+  member    Member   @relation(fields: [memberId], references: [id])
+  bookId    Int
+  book      Book     @relation(fields: [bookId], references: [id])
+}
