@@ -102,6 +102,13 @@ const Scanner = () => {
                 >
                     반납하기
                 </button>
+                <button
+                    className="btn"
+                    style={{ opacity: mode === 'track' ? 1 : 0.5, flex: 1, backgroundColor: '#3b82f6' }}
+                    onClick={() => { setMode('track'); setScannedQr(null); setMessage(''); }}
+                >
+                    조회하기
+                </button>
             </div>
 
             {mode === 'checkout' && (
@@ -134,21 +141,27 @@ const Scanner = () => {
                                 Code: {scannedQr.substring(0, 15)}...
                             </p>
 
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'center' }}>
-                                <button
-                                    onClick={handleAction}
-                                    className="btn"
-                                    style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)', padding: '12px 30px', fontSize: '1.1rem' }}
-                                >
-                                    {mode === 'checkout' ? '✅ 대여 실행' : '↩️ 반납 실행'}
-                                </button>
-                                <button
-                                    onClick={handleCancel}
-                                    className="btn"
-                                    style={{ background: '#64748b' }}
-                                >
-                                    취소
-                                </button>
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                {mode === 'track' ? (
+                                    <TrackInfo qrData={scannedQr} onReset={handleCancel} />
+                                ) : (
+                                    <>
+                                        <button
+                                            onClick={handleAction}
+                                            className="btn"
+                                            style={{ background: 'linear-gradient(135deg, #22c55e, #16a34a)', padding: '12px 30px', fontSize: '1.1rem' }}
+                                        >
+                                            {mode === 'checkout' ? '✅ 대여 실행' : '↩️ 반납 실행'}
+                                        </button>
+                                        <button
+                                            onClick={handleCancel}
+                                            className="btn"
+                                            style={{ background: '#64748b' }}
+                                        >
+                                            취소
+                                        </button>
+                                    </>
+                                )}
                             </div>
                         </div>
                     )}
@@ -167,6 +180,56 @@ const Scanner = () => {
                     <strong>{message.startsWith('Error') ? '❌ ' : '✅ '}</strong> {message}
                 </div>
             )}
+        </div>
+    );
+};
+
+const TrackInfo = ({ qrData, onReset }) => {
+    const [info, setInfo] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchInfo = async () => {
+            try {
+                const res = await api.post('/track', { qrData });
+                setInfo(res.data);
+            } catch (err) {
+                setError('책 정보를 찾을 수 없습니다.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchInfo();
+    }, [qrData]);
+
+    if (loading) return <p>정보 조회 중...</p>;
+    if (error) return (
+        <div>
+            <p style={{ color: '#f87171', marginBottom: '10px' }}>{error}</p>
+            <button onClick={onReset} className="btn">다시 스캔</button>
+        </div>
+    );
+
+    return (
+        <div style={{ textAlign: 'left', background: 'rgba(0,0,0,0.3)', padding: '20px', borderRadius: '10px', width: '100%', maxWidth: '400px' }}>
+            <h4 style={{ color: '#60a5fa', marginBottom: '10px' }}>📘 도서 정보</h4>
+            <p><strong>제목:</strong> {info.title}</p>
+            <p><strong>저자:</strong> {info.author}</p>
+            <p><strong>상태:</strong>
+                <span style={{ color: info.status === 'AVAILABLE' ? '#4ade80' : '#f87171', marginLeft: '5px' }}>
+                    {info.status === 'AVAILABLE' ? '대출 가능' : '대출 중'}
+                </span>
+            </p>
+
+            {info.status === 'LOANED' && info.loans && info.loans.length > 0 && (
+                <div style={{ marginTop: '15px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '10px' }}>
+                    <p><strong>대출자:</strong> {info.loans[0].member?.name || '정보 없음'}</p>
+                    <p><strong>반납 예정일:</strong> {new Date(info.loans[0].dueDate).toLocaleDateString()}</p>
+                </div>
+            )}
+
+            <button onClick={onReset} className="btn" style={{ marginTop: '20px', width: '100%' }}>확인 완료</button>
         </div>
     );
 };

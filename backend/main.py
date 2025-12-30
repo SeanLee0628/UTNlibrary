@@ -60,6 +60,9 @@ class LoanRequest(BaseModel):
 class ReturnRequest(BaseModel):
     qrData: str
 
+class SearchRequest(BaseModel):
+    qrData: str
+
 # Helpers
 def generate_qr(data: str) -> str:
     qr = qrcode.QRCode(
@@ -160,6 +163,24 @@ async def return_book(request: ReturnRequest):
     await db.book.update(where={"id": book.id}, data={"status": "AVAILABLE"})
     
     return {"message": "Return successful"}
+
+@app.post("/track")
+async def track_book(request: SearchRequest):
+    book = await db.book.find_unique(
+        where={"qrData": request.qrData},
+        include={
+            "loans": {
+                "include": {"member": True},
+                "where": {"returnDate": None} # Only active loans
+            }
+        }
+    )
+    
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+        
+    return book
+
 
 if __name__ == "__main__":
     import os
