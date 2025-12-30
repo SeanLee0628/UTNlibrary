@@ -20,8 +20,8 @@ const Dashboard = () => {
         api.get('/books'),
         api.get('/members')
       ]);
-      setBooks(booksRes.data);
-      setMembers(membersRes.data);
+      setBooks(Array.isArray(booksRes.data) ? booksRes.data : []);
+      setMembers(Array.isArray(membersRes.data) ? membersRes.data : []);
     } catch (error) {
       console.error("Error fetching data", error);
     }
