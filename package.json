@@ -8,8 +8,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd backend && py -m uvicorn main:app --reload",
-    "db:deploy": "cd backend && py -m prisma migrate deploy",
-    "db:push": "cd backend && py -m prisma db push"
+    "dev:backend": "cd backend && python -m uvicorn main:app --reload",
+    "db:deploy": "cd backend && python -m prisma migrate deploy",
+    "db:push": "cd backend && python -m prisma db push"
   }
 }
