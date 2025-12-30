@@ -25,4 +25,6 @@ COPY --from=builder /opt/venv /opt/venv
 # Enable venv in final stage
 ENV PATH="/opt/venv/bin:$PATH"
 
-CMD ["sh", "-c", "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"]
+WORKDIR /app/backend
+
+CMD ["python", "main.py"]
