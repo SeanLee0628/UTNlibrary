@@ -30,10 +30,9 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 origins = [
-    "http://localhost",
+    "https://teamchoi.netlify.app",
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://teamchoi.netlify.app",
     "https://www.teamchoi.netlify.app",
 ]
 
