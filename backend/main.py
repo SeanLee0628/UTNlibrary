@@ -97,11 +97,15 @@ async def create_book(book: BookCreate):
         "status": "AVAILABLE"
     })
     
-    qr_image = generate_qr(qr_data)
+    new_book = await db.book.create(data={
+        "title": book.title,
+        "author": book.author,
+        "qrData": qr_data,
+        "status": "AVAILABLE"
+    })
     
     return {
-        "book": new_book,
-        "qrImage": qr_image
+        "book": new_book
     }
 
 @app.get("/books")
