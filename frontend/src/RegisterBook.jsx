@@ -6,16 +6,31 @@ const RegisterBook = () => {
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [qrDataString, setQrDataString] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
+        setQrDataString('');
+
         try {
             const response = await api.post('/books', { title, author });
-            setQrDataString(response.data.book.qrData);
-            alert('도서가 성공적으로 등록되었습니다!');
+            console.log("Registration success:", response.data);
+
+            if (response.data && response.data.book && response.data.book.qrData) {
+                setQrDataString(response.data.book.qrData);
+                // Optional: alert('도서가 성공적으로 등록되었습니다!'); 
+            } else {
+                setError('서버 응답 형식이 올바르지 않습니다.');
+            }
         } catch (error) {
             console.error(error);
-            alert('도서 등록에 실패했습니다.');
+            const errorMsg = error.response?.data?.detail || error.message || '알 수 없는 오류';
+            setError(`등록 실패: ${errorMsg}`);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -37,8 +52,17 @@ const RegisterBook = () => {
                     onChange={(e) => setAuthor(e.target.value)}
                     required
                 />
-                <button type="submit" className="btn">QR 생성 및 등록</button>
+                <button type="submit" className="btn" disabled={loading} style={{ opacity: loading ? 0.7 : 1 }}>
+                    {loading ? '등록 처리 중...' : 'QR 생성 및 등록'}
+                </button>
             </form>
+
+            {error && (
+                <div style={{ marginTop: '20px', padding: '10px', background: 'rgba(239, 68, 68, 0.2)', border: '1px solid rgba(239, 68, 68, 0.5)', borderRadius: '8px', color: '#fca5a5' }}>
+                    🚨 {error}
+                </div>
+            )}
+
             {qrDataString && (
                 <div style={{ marginTop: '20px', textAlign: 'center' }}>
                     <h3>QR 코드 (제목: "{title}")</h3>
