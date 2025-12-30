@@ -97,13 +97,6 @@ async def create_book(book: BookCreate):
         "status": "AVAILABLE"
     })
     
-    new_book = await db.book.create(data={
-        "title": book.title,
-        "author": book.author,
-        "qrData": qr_data,
-        "status": "AVAILABLE"
-    })
-    
     return {
         "book": new_book
     }
