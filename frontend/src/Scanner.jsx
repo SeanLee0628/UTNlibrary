@@ -30,7 +30,11 @@ const Scanner = () => {
                 qrbox: { width: 250, height: 250 },
                 videoConstraints: {
                     facingMode: "environment"
-                }
+                },
+                supportedScanTypes: [0], // 0 == SCAN_TYPE_CAMERA (Disable file scan)
+                showTorchButtonIfSupported: true,
+                showZoomSliderIfSupported: true,
+                defaultZoomValueIfSupported: 2
             },
             /* verbose= */ false
         );

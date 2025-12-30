@@ -128,4 +128,25 @@ h3 {
   .mobile-nav {
     display: flex !important;
   }
+
+  /* Hide file scan option */
+  #html5-qrcode-input-range-slider,
+  #html5-qrcode-anchor-scan-type-change,
+  button:contains("Scan an Image File") {
+    display: none !important;
+  }
+}
+
+/* Global Scanner Styles */
+#reader__filescan_input {
+  display: none !important;
+}
+
+div[id^="html5-qrcode-anchor-scan-type-change"] {
+  display: none !important;
+}
+
+/* Hide the specific button text if possible, but safer to hide the container link/button */
+#html5-qrcode-button-file-selection {
+  display: none !important;
 }
