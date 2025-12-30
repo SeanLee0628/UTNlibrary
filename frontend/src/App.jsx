@@ -8,7 +8,6 @@ import './index.css';
 
 const Dashboard = () => {
   const [books, setBooks] = useState([]);
-  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -16,12 +15,8 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [booksRes, membersRes] = await Promise.all([
-        api.get('/books'),
-        api.get('/members')
-      ]);
+      const booksRes = await api.get('/books');
       setBooks(Array.isArray(booksRes.data) ? booksRes.data : []);
-      setMembers(Array.isArray(membersRes.data) ? membersRes.data : []);
     } catch (error) {
       console.error("Error fetching data", error);
     }
@@ -32,32 +27,21 @@ const Dashboard = () => {
       <h1>도서관 대시보드</h1>
       <button onClick={fetchData} className="btn" style={{ marginBottom: '20px' }}>데이터 새로고침</button>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        <div className="card">
-          <h3>도서 현황 ({books.length})</h3>
-          <ul style={{ maxHeight: '300px', overflowY: 'auto', paddingLeft: '20px' }}>
-            {books.map(book => (
-              <li key={book.id}>
-                <strong>{book.title}</strong> - {book.author}
-                <span style={{
-                  color: book.status === 'AVAILABLE' ? '#4ade80' : '#f87171',
-                  marginLeft: '5px'
-                }}>
-                  [{book.status === 'AVAILABLE' ? '대출 가능' : '대출 중'}]
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="card">
-          <h3>회원 현황 ({members.length})</h3>
-          <ul style={{ maxHeight: '300px', overflowY: 'auto', paddingLeft: '20px' }}>
-            {members.map(member => (
-              <li key={member.id}>{member.name} (ID: {member.id})</li>
-            ))}
-          </ul>
-        </div>
+      <div className="card">
+        <h3>도서 현황 ({books.length})</h3>
+        <ul style={{ maxHeight: '300px', overflowY: 'auto', paddingLeft: '20px' }}>
+          {books.map(book => (
+            <li key={book.id}>
+              <strong>{book.title}</strong> - {book.author}
+              <span style={{
+                color: book.status === 'AVAILABLE' ? '#4ade80' : '#f87171',
+                marginLeft: '5px'
+              }}>
+                [{book.status === 'AVAILABLE' ? '대출 가능' : '대출 중'}]
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
