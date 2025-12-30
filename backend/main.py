@@ -34,7 +34,7 @@ origins = [
     "https://teamchoi.netlify.app",
     "http://localhost:5173",
     "http://localhost:3000",
-    "https://www.teamchoi.netlify.app"
+    "https://www.teamchoi.netlify.app",
 ]
 
 app.add_middleware(
