@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . .
 
 # Install dependencies and generate Prisma client
-RUN python3 -m pip install -r backend/requirements.txt
+RUN python3 -m pip install -r backend/requirements.txt --break-system-packages
 RUN python3 -m prisma generate --schema=backend/schema.prisma
 
 FROM python:3.9-slim
