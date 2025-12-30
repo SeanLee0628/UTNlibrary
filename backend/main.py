@@ -29,6 +29,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# Allowed origins for CORS (Netlify and Localhost)
 origins = [
     "https://teamchoi.netlify.app",
     "http://localhost:3000",
