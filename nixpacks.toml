@@ -17,4 +17,4 @@ cmds = ["python3 -m prisma generate --schema=backend/schema.prisma"]
 
 # 5. Start the application
 [start]
-cmd = "python3 backend/main.py"
+cmd = "python3 -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
