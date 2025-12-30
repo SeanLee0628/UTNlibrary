@@ -1,0 +1,20 @@
+# This file controls the Nixpacks build system (used by Railway)
+
+# 1. Force Nixpacks to use ONLY Python provider (Ignore Node/package.json)
+providers = ["python"]
+
+# 2. Define system packages to install
+[phases.setup]
+nixPkgs = ["python311", "openssl", "libatomic_ops", "gcc"]
+
+# 3. Install Python dependencies
+[phases.install]
+cmds = ["python3 -m pip install -r backend/requirements.txt"]
+
+# 4. Generate Prisma Client
+[phases.build]
+cmds = ["python3 -m prisma generate --schema=backend/schema.prisma"]
+
+# 5. Start the application
+[start]
+cmd = "python3 backend/main.py"
