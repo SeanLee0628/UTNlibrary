@@ -2,7 +2,7 @@
     "$schema": "https://railway.app/railway.schema.json",
     "build": {
         "builder": "NIXPACKS",
-        "buildCommand": "pip install -r backend/requirements.txt && python -m prisma generate --schema=backend/schema.prisma"
+        "buildCommand": "python -m pip install -r backend/requirements.txt && python -m prisma generate --schema=backend/schema.prisma"
     },
     "deploy": {
         "startCommand": "python backend/main.py",
