@@ -8,7 +8,7 @@ const Scanner = () => {
     const [memberId, setMemberId] = useState('');
     const [message, setMessage] = useState('');
     const [members, setMembers] = useState([]);
-    const [manualCode, setManualCode] = useState('');
+
 
     useEffect(() => {
         const fetchMembers = async () => {
@@ -74,10 +74,7 @@ const Scanner = () => {
         }
     };
 
-    const handleManualSubmit = (e) => {
-        e.preventDefault();
-        if (manualCode) handleScan(manualCode);
-    };
+
 
     return (
         <div className="card glass-panel">
@@ -124,20 +121,7 @@ const Scanner = () => {
                     <div id="reader" style={{ width: '100%', maxWidth: '500px', margin: '0 auto' }}></div>
                 </div>
 
-                {/* Manual Entry Section */}
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px' }}>
-                    <h3 style={{ fontSize: '1.1rem', marginTop: 0 }}>또는 코드를 직접 입력하세요</h3>
-                    <form onSubmit={handleManualSubmit} style={{ display: 'flex', gap: '10px' }}>
-                        <input
-                            type="text"
-                            placeholder="QR 코드를 붙여넣으세요..."
-                            value={manualCode}
-                            onChange={(e) => setManualCode(e.target.value)}
-                            style={{ margin: 0, flex: 1 }}
-                        />
-                        <button type="submit" className="btn" style={{ background: 'var(--accent)' }}>확인</button>
-                    </form>
-                </div>
+
             </div>
 
             {message && (
