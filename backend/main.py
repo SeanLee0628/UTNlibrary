@@ -160,11 +160,23 @@ async def track_book(request: SearchRequest):
             }
         }
     )
-    
+
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
-        
+
     return book
+
+@app.get("/active-loans")
+async def get_active_loans():
+    loans = await db.loan.find_many(
+        where={"returnDate": None},
+        include={
+            "book": True,
+            "member": True
+        },
+        order={"loanDate": "desc"}
+    )
+    return loans
 
 
 if __name__ == "__main__":

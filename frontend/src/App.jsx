@@ -8,6 +8,7 @@ import './index.css';
 
 const Dashboard = () => {
   const [books, setBooks] = useState([]);
+  const [activeLoans, setActiveLoans] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -15,11 +16,20 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      const booksRes = await api.get('/books');
+      const [booksRes, loansRes] = await Promise.all([
+        api.get('/books'),
+        api.get('/active-loans')
+      ]);
       setBooks(Array.isArray(booksRes.data) ? booksRes.data : []);
+      setActiveLoans(Array.isArray(loansRes.data) ? loansRes.data : []);
     } catch (error) {
       console.error("Error fetching data", error);
     }
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
   return (
@@ -27,21 +37,37 @@ const Dashboard = () => {
       <h1>도서관 대시보드</h1>
       <button onClick={fetchData} className="btn" style={{ marginBottom: '20px' }}>데이터 새로고침</button>
 
-      <div className="card">
-        <h3>도서 현황 ({books.length})</h3>
-        <ul style={{ maxHeight: '300px', overflowY: 'auto', paddingLeft: '20px' }}>
-          {books.map(book => (
-            <li key={book.id}>
-              <strong>{book.title}</strong> - {book.author}
-              <span style={{
-                color: book.status === 'AVAILABLE' ? '#4ade80' : '#f87171',
-                marginLeft: '5px'
-              }}>
-                [{book.status === 'AVAILABLE' ? '대출 가능' : '대출 중'}]
-              </span>
-            </li>
-          ))}
-        </ul>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+        <div className="card">
+          <h3>도서 현황 ({books.length})</h3>
+          <ul style={{ maxHeight: '300px', overflowY: 'auto', paddingLeft: '20px' }}>
+            {books.map(book => (
+              <li key={book.id}>
+                <strong>{book.title}</strong> - {book.author}
+                <span style={{
+                  color: book.status === 'AVAILABLE' ? '#4ade80' : '#f87171',
+                  marginLeft: '5px'
+                }}>
+                  [{book.status === 'AVAILABLE' ? '대출 가능' : '대출 중'}]
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="card">
+          <h3>독서중 ({activeLoans.length})</h3>
+          <ul style={{ maxHeight: '300px', overflowY: 'auto', paddingLeft: '20px' }}>
+            {activeLoans.map(loan => (
+              <li key={loan.id} style={{ marginBottom: '12px' }}>
+                <div><strong>{loan.book?.title}</strong></div>
+                <div style={{ fontSize: '14px', color: '#94a3b8' }}>
+                  {loan.member?.name} · 반납일: {formatDate(loan.dueDate)}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
