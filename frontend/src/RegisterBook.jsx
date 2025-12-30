@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import api from './api';
+import QRCode from 'react-qr-code';
 
 const RegisterBook = () => {
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
-    const [qrImage, setQrImage] = useState(null);
     const [qrDataString, setQrDataString] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const response = await api.post('/books', { title, author });
-            setQrImage(response.data.qrImage);
             setQrDataString(response.data.book.qrData);
             alert('도서가 성공적으로 등록되었습니다!');
         } catch (error) {
@@ -40,11 +39,18 @@ const RegisterBook = () => {
                 />
                 <button type="submit" className="btn">QR 생성 및 등록</button>
             </form>
-            {qrImage && (
+            {qrDataString && (
                 <div style={{ marginTop: '20px', textAlign: 'center' }}>
                     <h3>QR 코드 (제목: "{title}")</h3>
-                    <img src={qrImage} alt="QR Code" style={{ borderRadius: '8px', border: '5px solid white' }} />
-                    <p style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>이 코드를 인쇄하여 책에 부착하세요.</p>
+                    <div style={{ background: 'white', padding: '16px', borderRadius: '8px', display: 'inline-block' }}>
+                        <QRCode
+                            value={qrDataString}
+                            size={200}
+                            style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                        />
+                    </div>
+                    <p style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: '10px' }}>이 코드를 인쇄하여 책에 부착하세요.</p>
+
                     {/* Display QR Data for testing */}
                     <div style={{ marginTop: '10px', padding: '10px', background: 'rgba(0,0,0,0.3)', borderRadius: '8px' }}>
                         <p style={{ margin: 0, fontSize: '0.9rem', color: '#94a3b8' }}>QR 문자열 (테스트용):</p>
